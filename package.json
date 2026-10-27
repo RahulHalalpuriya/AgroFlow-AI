@@ -1,0 +1,35 @@
+{
+  "name": "agripilot-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AgroFlow-AI - Autonomous Farm Operations & Intelligent Resource Management Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "predev": "npm run build --workspace=@agripilot/shared",
+    "dev": "concurrently -k -n API,WEB -c cyan.bold,green.bold \"npm:dev:api\" \"npm:dev:web\"",
+    "num": "npm run dev",
+    "dev:api": "npm run dev --workspace=@agripilot/api",
+    "dev:web": "npm run dev --workspace=@agripilot/web",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "prisma:generate": "npm run prisma:generate --workspace=@agripilot/api",
+    "prisma:push": "npm run prisma:push --workspace=@agripilot/api",
+    "seed": "npm run seed --workspace=@agripilot/api"
+  },
+  "keywords": [
+    "agriculture",
+    "ai",
+    "precision-farming",
+    "resource-management",
+    "autonomous-scheduling"
+  ],
+  "author": "AgriPilot Engineering Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "typescript": "^5.5.4"
+  }
+}

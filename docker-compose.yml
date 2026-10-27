@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: agripilot_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: agripilot
+      POSTGRES_PASSWORD: agripilot123
+      POSTGRES_DB: agripilot_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agripilot -d agripilot_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: agripilot_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: agripilot_api
+    restart: always
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://agripilot:agripilot123@postgres:5432/agripilot_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "agripilot-super-secure-production-jwt-secret-key-32chars"
+      CORS_ORIGIN: "http://localhost:3000"
+      WEATHER_PROVIDER: "open-meteo"
+      AI_PROVIDER: "mock"
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    container_name: agripilot_worker
+    restart: always
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://agripilot:agripilot123@postgres:5432/agripilot_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: agripilot_web
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  redisdata:
