@@ -1,35 +1,25 @@
 {
-  "name": "agripilot-ai",
+  "name": "kisanai-autonomous-farm-operations-system",
   "version": "1.0.0",
-  "private": true,
-  "description": "AgroFlow-AI - Autonomous Farm Operations & Intelligent Resource Management Platform",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "description": "KisanAI – Autonomous Farm Operations System (Agentic AI × SDG Hackathon)",
   "scripts": {
-    "predev": "npm run build --workspace=@agripilot/shared",
-    "dev": "concurrently -k -n API,WEB -c cyan.bold,green.bold \"npm:dev:api\" \"npm:dev:web\"",
-    "num": "npm run dev",
-    "dev:api": "npm run dev --workspace=@agripilot/api",
-    "dev:web": "npm run dev --workspace=@agripilot/web",
-    "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "prisma:generate": "npm run prisma:generate --workspace=@agripilot/api",
-    "prisma:push": "npm run prisma:push --workspace=@agripilot/api",
-    "seed": "npm run seed --workspace=@agripilot/api"
+    "dev": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"green,cyan\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "deb": "npm run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"green,cyan\" \"npm run start:backend\" \"npm run dev:frontend\"",
+    "start:backend": "npm --prefix backend start",
+    "seed": "npm --prefix backend run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   },
   "keywords": [
-    "agriculture",
-    "ai",
-    "precision-farming",
-    "resource-management",
-    "autonomous-scheduling"
+    "kisanai",
+    "agentic-ai",
+    "sdg-hackathon",
+    "autonomous-farming"
   ],
-  "author": "AgriPilot Engineering Team",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^9.0.1",
-    "typescript": "^5.5.4"
-  }
+  "author": "Hackathon Team",
+  "license": "MIT"
 }
